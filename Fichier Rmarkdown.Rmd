@@ -1,0 +1,83 @@
+---
+title: "Jeux de données CreditBancaire"
+author: "Ymca DOLBRUN"
+date: "2022-12-09"
+output:
+  word_document: default
+  html_document: default
+---
+ 
+
+
+# Importation des données 
+ 
+```{r}
+library(broom)
+library(car)
+library(ggplot2)
+
+ df<-read.csv("CreditBancaire.csv")
+
+```
+
+## Regression du nombre de jours de retards sur les variables Credit et Type
+
+```{r}
+  Reg <-lm (Jours~Credit+Type,data = df)
+  Reg
+```
+
+### Affichons les résultats détaillés de la regression
+
+```{r}
+  summary(Reg)
+```
+
+#### Extraction du tableau des coefficients qui inclut aussi les statistiques de Student et les probabilités.
+```{r}
+ Coeff<- tidy(Reg)
+ Coeff
+ 
+
+``` 
+
+
+##### Affichage des colonnes des coefficients estimés et les valeurs de la statistique de Student
+
+```{r}
+  COEFF<-data.frame(tidy(Reg)$estimate,tidy(Reg)$statistic)
+  COEFF
+```
+
+#### La droite de regression:
+
+ DroiteReg= 8.519082e+01-5.483559e-06* Credit -1.485726e+01* TypeConsommation +1.497503e+01*TypeProduction
+ 
+###### Réalisation du graphique de nuage de points
+
+```{r}
+   
+scatterplot(df$Jours~df$Credit, data = df)
+
+```
+
+###### Création d'une fonction qui nous permet de régresser une variable y sur une autre notée x, sachant que ces deux variables sont deux colonnes d'un dataframe noté data. 
+ 
+```{r}
+   FonctionRegression <- function(){
+     y= c(3,9,20,40,45,90)
+    x= c(30,40,50,60,70,80)
+    data= data.frame(y,x)
+    Coefx<- summary(lm(y~x, data))$coefficients[,1]
+    Coefx
+    StatStudent<-summary(lm(y~x, data))$coefficients[,3]
+    StatStudent
+    
+    data1= data.frame(Coefx,StatStudent)
+    
+    return(data1)
+    
+   }
+
+  FonctionRegression()
+```
